@@ -16,6 +16,7 @@ import {
   assignSubAgentDelegations,
   deduplicateLabels,
   formatAssignmentSummary,
+  validateUuid,
 } from "./helpers";
 import type { ArchestraContext } from "./types";
 
@@ -204,18 +205,19 @@ export const tools: Tool[] = [
     name: TOOL_GET_AGENT_FULL_NAME,
     title: "Get Agent",
     description:
-      "Get a specific agent by ID or name. When searching by name, only your personal agents are matched.",
+      "Get a specific agent by ID or name. Use 'name' if you only know the agent's name — do NOT put a name string into the 'id' field. When searching by name, only your personal agents are matched.",
     inputSchema: {
       type: "object",
       properties: {
         id: {
           type: "string",
-          description: "The ID of the agent to retrieve",
+          description:
+            "The UUID of the agent to retrieve. Must be a valid UUID (e.g. '123e4567-e89b-12d3-a456-426614174000'). If you only have a name, use the 'name' parameter instead.",
         },
         name: {
           type: "string",
           description:
-            "Search by name (partial match). Only returns your personal agents.",
+            "Search by name (partial match). Use this when you know the agent's name but not its UUID. Only returns your personal agents.",
         },
       },
     },
@@ -226,18 +228,19 @@ export const tools: Tool[] = [
     name: TOOL_GET_LLM_PROXY_FULL_NAME,
     title: "Get LLM Proxy",
     description:
-      "Get a specific LLM proxy by ID or name. When searching by name, only your personal proxies are matched.",
+      "Get a specific LLM proxy by ID or name. Use 'name' if you only know the proxy's name — do NOT put a name string into the 'id' field. When searching by name, only your personal proxies are matched.",
     inputSchema: {
       type: "object",
       properties: {
         id: {
           type: "string",
-          description: "The ID of the LLM proxy to retrieve",
+          description:
+            "The UUID of the LLM proxy to retrieve. Must be a valid UUID (e.g. '123e4567-e89b-12d3-a456-426614174000'). If you only have a name, use the 'name' parameter instead.",
         },
         name: {
           type: "string",
           description:
-            "Search by name (partial match). Only returns your personal proxies.",
+            "Search by name (partial match). Use this when you know the proxy's name but not its UUID. Only returns your personal proxies.",
         },
       },
     },
@@ -248,18 +251,19 @@ export const tools: Tool[] = [
     name: TOOL_GET_MCP_GATEWAY_FULL_NAME,
     title: "Get MCP Gateway",
     description:
-      "Get a specific MCP gateway by ID or name. When searching by name, only your personal gateways are matched.",
+      "Get a specific MCP gateway by ID or name. Use 'name' if you only know the gateway's name — do NOT put a name string into the 'id' field. When searching by name, only your personal gateways are matched.",
     inputSchema: {
       type: "object",
       properties: {
         id: {
           type: "string",
-          description: "The ID of the MCP gateway to retrieve",
+          description:
+            "The UUID of the MCP gateway to retrieve. Must be a valid UUID (e.g. '123e4567-e89b-12d3-a456-426614174000'). If you only have a name, use the 'name' parameter instead.",
         },
         name: {
           type: "string",
           description:
-            "Search by name (partial match). Only returns your personal gateways.",
+            "Search by name (partial match). Use this when you know the gateway's name but not its UUID. Only returns your personal gateways.",
         },
       },
     },
@@ -541,6 +545,12 @@ export async function handleTool(
       let record: Agent | null | undefined;
 
       if (id) {
+        if (!validateUuid(id)) {
+          return {
+            content: [{ type: "text", text: "Error: id must be a valid UUID" }],
+            isError: true,
+          };
+        }
         record = await AgentModel.findById(id);
       } else if (name) {
         // Search by name, only matching personal agents owned by the current user
@@ -681,6 +691,12 @@ export async function handleTool(
       if (!id) {
         return {
           content: [{ type: "text", text: "Error: agent id is required." }],
+          isError: true,
+        };
+      }
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID" }],
           isError: true,
         };
       }

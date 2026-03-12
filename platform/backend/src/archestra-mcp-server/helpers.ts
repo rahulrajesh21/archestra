@@ -116,3 +116,14 @@ export function deduplicateLabels(
 ): Array<{ key: string; value: string }> {
   return Array.from(new Map(rawLabels.map((l) => [l.key, l])).values());
 }
+
+const UUID_REGEX =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+/**
+ * Validates if the given string is a valid UUID format
+ */
+export function validateUuid(id: string | undefined | null): boolean {
+  if (!id) return false;
+  return UUID_REGEX.test(id);
+}

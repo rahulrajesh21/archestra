@@ -10,6 +10,7 @@ import {
   type ToolInvocation,
   type TrustedData,
 } from "@/types";
+import { validateUuid } from "./helpers";
 import type { ArchestraContext } from "./types";
 
 // === Constants ===
@@ -564,6 +565,13 @@ export async function handleTool(
         };
       }
 
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID" }],
+          isError: true,
+        };
+      }
+
       const policy = await ToolInvocationPolicyModel.findById(id);
       if (!policy) {
         return {
@@ -619,6 +627,13 @@ export async function handleTool(
               text: "Error: id parameter is required",
             },
           ],
+          isError: true,
+        };
+      }
+
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID" }],
           isError: true,
         };
       }
@@ -688,6 +703,13 @@ export async function handleTool(
               text: "Error: id parameter is required",
             },
           ],
+          isError: true,
+        };
+      }
+
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID" }],
           isError: true,
         };
       }
@@ -823,6 +845,13 @@ export async function handleTool(
         };
       }
 
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID" }],
+          isError: true,
+        };
+      }
+
       const policy = await TrustedDataPolicyModel.findById(id);
       if (!policy) {
         return {
@@ -878,6 +907,13 @@ export async function handleTool(
               text: "Error: id parameter is required",
             },
           ],
+          isError: true,
+        };
+      }
+
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID" }],
           isError: true,
         };
       }
@@ -947,6 +983,13 @@ export async function handleTool(
               text: "Error: id parameter is required",
             },
           ],
+          isError: true,
+        };
+      }
+
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID" }],
           isError: true,
         };
       }
