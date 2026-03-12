@@ -14,7 +14,7 @@ import {
   ToolModel,
 } from "@/models";
 import type { InternalMcpCatalog } from "@/types";
-import { deduplicateLabels } from "./helpers";
+import { deduplicateLabels, validateUuid } from "./helpers";
 import type { ArchestraContext } from "./types";
 
 // === Constants ===
@@ -967,6 +967,13 @@ export async function handleTool(
           content: [
             { type: "text", text: "Error: MCP server catalog id is required." },
           ],
+          isError: true,
+        };
+      }
+
+      if (!validateUuid(id)) {
+        return {
+          content: [{ type: "text", text: "Error: id must be a valid UUID." }],
           isError: true,
         };
       }
